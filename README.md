@@ -1417,6 +1417,3 @@ This documentation provides a comprehensive guide to understanding and editing t
 - Shard fusion data: ~1.8MB (loaded externally)
 
 ---
-
-*Documentation generated for SkyBlock Bazaar Analyzer*
-*Last updated: Project analysis date*
