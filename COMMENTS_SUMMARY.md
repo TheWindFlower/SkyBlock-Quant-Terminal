@@ -4,7 +4,7 @@ This document provides an overview of the comments added to the SkyBlock Bazaar 
 
 ## Files Fully Commented
 
-### ✅ Completed
+###  Completed
 
 1. **main.jsx** - Entry Point
    - Added file header with purpose and author
@@ -45,7 +45,7 @@ This document provides an overview of the comments added to the SkyBlock Bazaar 
    - Added section header and JSDoc for filtering function
    - **IN PROGRESS**: Core processing functions need comments
 
-### ⏳ In Progress / Pending
+###  In Progress / Pending
 
 7. **App.jsx** - Core Processing Functions
    - `resolveIngredientCost()` - Recursive cost resolution

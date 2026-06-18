@@ -43,19 +43,19 @@ export default function App() {
     // ==========================================
     // DATA STATES
     // ==========================================
-    
+
     /**
      * Stores all bazaar product data from Hypixel API
      * Structure: { [productId]: { quick_status, buy_summary, sell_summary, ... } }
      */
     const [bazaarData, setBazaarData] = useState({});
-    
+
     /**
      * Maps item IDs to their NPC sell prices
      * Structure: { [itemId]: npcSellPrice }
      */
     const [npcPrices, setNpcPrices] = useState({});
-    
+
     /**
      * Indicates whether API data is currently being fetched
      */
@@ -64,39 +64,39 @@ export default function App() {
     // ==========================================
     // UI STATES
     // ==========================================
-    
+
     /**
      * Current active tab: 'crafting', 'bazaar', 'npc', or 'shards'
      */
     const [activeTab, setActiveTab] = useState('crafting');
-    
+
     /**
      * Current active NPC sub-tab: 'craft', 'flip', or 'instant'
      * Only used when activeTab === 'npc'
      */
     const [activeNpcTab, setActiveNpcTab] = useState('craft');
-    
+
     /**
      * Text filter for item names (case-insensitive search)
      */
     const [searchTerm, setSearchTerm] = useState('');
-    
+
     /**
      * Currently expanded item ID for detailed view
      * null means no item is expanded
      */
     const [expandedItem, setExpandedItem] = useState(null);
-    
+
     /**
      * Array of item IDs that user has chosen to hide from results
      */
     const [hiddenItems, setHiddenItems] = useState([]);
-    
+
     /**
      * Controls visibility of the hidden items manager panel
      */
     const [showHiddenManager, setShowHiddenManager] = useState(false);
-    
+
     /**
      * Reference to store previous prices for trend detection
      * Uses ref to avoid triggering re-renders when updated
@@ -107,7 +107,7 @@ export default function App() {
     // ==========================================
     // FILTER STATES
     // ==========================================
-    
+
     /**
      * All filter settings for data tables
      * These are applied to processed data before display
@@ -128,7 +128,7 @@ export default function App() {
     // ==========================================
     // DATA FETCHING
     // ==========================================
-    
+
     /**
      * Initial data fetch on component mount
      * Fetches bazaar data immediately and sets up interval for refresh
@@ -203,7 +203,7 @@ export default function App() {
     // ==========================================
     // EVENT HANDLERS
     // ==========================================
-    
+
     /**
      * Updates a single filter value
      * Preserves all other filter values
@@ -241,7 +241,7 @@ export default function App() {
     // ==========================================
     // FILTERING
     // ==========================================
-    
+
     /**
      * Applies all filter settings to an item
      * Returns false if item should be filtered out, true if it should be displayed
@@ -253,17 +253,17 @@ export default function App() {
     const applyFilters = (item) => {
         // Hidden items filter
         if (hiddenItems.includes(item.id)) return false;
-        
+
         // Search filter (case-insensitive)
         if (searchTerm && !item.name.toLowerCase().includes(searchTerm.toLowerCase())) return false;
-        
+
         // Profit threshold filter
         if (item.profit < parseCompactNumber(filters.minProfit)) return false;
-        
+
         // Order count filters
         if (item.buyOrders < parseCompactNumber(filters.minBuyOrders)) return false;
         if (item.sellOrders < parseCompactNumber(filters.minSellOrders)) return false;
-        
+
         // Volume filters
         if (item.buyVolume < parseCompactNumber(filters.minBuyVolume)) return false;
         if (item.sellVolume < parseCompactNumber(filters.minSellVolume)) return false;
@@ -287,7 +287,7 @@ export default function App() {
     // ==========================================
     // CORE PROCESSING FUNCTIONS
     // ==========================================
-    
+
     /**
      * Recursively resolves the true cost of an ingredient.
      * This is the heart of the crafting profitability calculation.
@@ -303,7 +303,7 @@ export default function App() {
     const resolveIngredientCost = (ingId, depth, maxDepth) => {
         // Get the current market price for this ingredient
         const marketPrice = bazaarData[ingId]?.quick_status?.sellPrice || 0;
-        
+
         // Base case: if we've reached max depth, return market price
         if (depth >= maxDepth) return marketPrice;
 
@@ -324,7 +324,7 @@ export default function App() {
 
         // Calculate cost per unit of output
         const costPerUnit = subCraftCost / outputCount;
-        
+
         // Return the cheaper option: craft cost or market price
         // Only use craft cost if it's positive and actually cheaper than market
         return costPerUnit > 0 && costPerUnit < marketPrice ? costPerUnit : marketPrice;
@@ -348,14 +348,14 @@ export default function App() {
     const getRawLeafCount = (ingId, ingCount, depth, maxDepth) => {
         // Base case: if we've reached max depth, return the ingredient count
         if (depth >= maxDepth) return ingCount;
-        
+
         // Find the recipe for this ingredient
         const subRecipe = RECIPES_DB.find(r => r.targetItem === ingId);
         if (!subRecipe) return ingCount;
-        
+
         // Get output count (default to 1 if not specified)
         const outputCount = subRecipe.outputCount || 1;
-        
+
         // Track the maximum raw count needed across all sub-ingredients
         let maxSubCount = 0;
         for (const subIng of subRecipe.ingredients) {
@@ -513,7 +513,7 @@ export default function App() {
     // ==========================================
     // BAZAAR FLIP PROCESSING
     // ==========================================
-    
+
     /**
      * Finds profitable pure bazaar flips (buy order -> sell offer).
      * 
@@ -595,7 +595,7 @@ export default function App() {
     // ==========================================
     // CRAFTING FLIP PROCESSING
     // ==========================================
-    
+
     /**
      * Filters crafting items to only show profitable ones
      * and applies user filters.
@@ -611,7 +611,7 @@ export default function App() {
     // ==========================================
     // NPC CRAFT FLIP PROCESSING
     // ==========================================
-    
+
     /**
      * Filters crafting items to only show those profitable when
      * selling to NPC instead of bazaar.
@@ -628,7 +628,7 @@ export default function App() {
     // ==========================================
     // NPC FLIP PROCESSING (ALL TYPES)
     // ==========================================
-    
+
     /**
      * Finds all NPC flip opportunities (3 types combined):
      * 1. Craft → NPC: Craft items and sell to NPC
@@ -751,7 +751,7 @@ export default function App() {
     // ==========================================
     // DATA SELECTION FOR DISPLAY
     // ==========================================
-    
+
     /**
      * Selects the active dataset based on current tab
      * - NPC tab: Uses processNpcFlips()
@@ -777,7 +777,7 @@ export default function App() {
     // ==========================================
     // RENDER
     // ==========================================
-    
+
     return (
         // Main application container with dark theme
         <div className="min-h-screen bg-[#09090b] text-[#fafafa] antialiased font-sans p-4 md:p-8">
@@ -814,7 +814,7 @@ export default function App() {
                             >
                                 Crafting Pipeline ({processCraftingFlips().length})
                             </button>
-                            
+
                             {/* Pure Orders Tab - Shows profitable buy/sell order spreads */}
                             <button
                                 onClick={() => { setActiveTab('bazaar'); setExpandedItem(null); }}
@@ -822,7 +822,7 @@ export default function App() {
                             >
                                 Pure Orders ({processBazaarFlips().length})
                             </button>
-                            
+
                             {/* NPC Flips Tab - Shows items profitable to sell to NPCs */}
                             <button
                                 onClick={() => { setActiveTab('npc'); setExpandedItem(null); }}
@@ -830,7 +830,7 @@ export default function App() {
                             >
                                 NPC Flips ({processNpcFlips().length})
                             </button>
-                            
+
                             {/* Shard Fusion Tab - Shows profitable shard fusion combinations */}
                             <button
                                 onClick={() => { setActiveTab('shards'); setExpandedItem(null); }}
@@ -841,8 +841,9 @@ export default function App() {
                         </div>
 
                         {/* Render the appropriate table based on active tab */}
+
                         {activeTab === 'crafting' ? (
-                            {/* Crafting Pipeline Table - Shows expandable crafting opportunities */}
+                            /* Crafting Pipeline Table - Shows expandable crafting opportunities */
                             <DataTable
                                 displayedData={displayedData}
                                 activeTab={activeTab}
@@ -851,22 +852,22 @@ export default function App() {
                                 hideItem={hideItem}
                             />
                         ) : activeTab === 'bazaar' ? (
-                            {/* Pure Orders Table - Shows bazaar flip opportunities */}
-                            <SimpleFlipTable displayedData={displayedData} />
+                            /* Pure Orders Table - Shows bazaar flip opportunities */
+                            < SimpleFlipTable displayedData={displayedData} />
                         ) : activeTab === 'npc' ? (
-                            {/* NPC Flips Table - Shows NPC selling opportunities with sub-tabs */}
+                            /* NPC Flips Table - Shows NPC selling opportunities with sub-tabs */
                             <NpcFlipTable
                                 displayedData={npcData.filter(i => i.source === activeNpcTab).slice(0, parseInt(filters.limit, 10) || 50)}
                                 activeNpcTab={activeNpcTab}
                                 setActiveNpcTab={setActiveNpcTab}
-                                counts={{ 
-                                    craft: npcCraftCount, 
-                                    flip: npcFlipCount, 
-                                    instant: npcData.filter(i => i.source === 'instant').length, 
+                                counts={{
+                                    craft: npcCraftCount,
+                                    flip: npcFlipCount,
+                                    instant: npcData.filter(i => i.source === 'instant').length,
                                 }}
                             />
                         ) : activeTab === 'shards' ? (
-                            {/* Shard Fusion Table - Uses Web Worker for heavy computations */}
+                            /* Shard Fusion Table - Uses Web Worker for heavy computations */
                             <ShardFusionTable bazaarData={bazaarData} />
                         ) : null}
 
