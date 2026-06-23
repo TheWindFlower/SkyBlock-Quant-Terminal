@@ -99,3 +99,21 @@ export const parseFlipTime = (input) => {
     default: return value; // hours (default)
   }
 };
+
+export function formatSellTime(totalSeconds) {
+    if (totalSeconds >= 86400) {
+        return `${Math.floor(totalSeconds / 86400)}d`;
+    }
+
+    if (totalSeconds >= 3600) {
+        return `${Math.floor(totalSeconds / 3600)}h`;
+    }
+
+    if (totalSeconds >= 60) {
+        return `${Math.floor(totalSeconds / 60)}m`;
+    }
+
+    return `${Math.floor(totalSeconds)}s`;
+}
+
+
